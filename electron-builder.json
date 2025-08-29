@@ -1,0 +1,40 @@
+{
+  "appId": "com.t-Osho.FFMPEG-Wrapper",
+  "files": ["dist-electron", "dist-react"],
+  "icon":"./ffmpegwrapper.png",
+  "extraResources": [
+    {
+      "from": "node_modules/ffmpeg-static",
+      "to": "ffmpeg-static",
+      "filter": ["**/*"]
+    }
+  ],
+  "mac": {
+    "target": "dmg",
+    "extraResources": [
+      {
+        "from": "node_modules/ffmpeg-static/bin/darwin/x64/ffmpeg",
+        "to": "ffmpeg"
+      }
+    ]
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility",
+    "extraResources": [
+      {
+        "from": "node_modules/ffmpeg-static/bin/linux/x64/ffmpeg",
+        "to": "ffmpeg"
+      }
+    ]
+  },
+  "win": {
+    "target": ["portable", "msi"],
+    "extraResources": [
+      {
+        "from": "node_modules/ffmpeg-static/bin/win32/x64/ffmpeg.exe",
+        "to": "ffmpeg.exe"
+      }
+    ]
+  }
+}
