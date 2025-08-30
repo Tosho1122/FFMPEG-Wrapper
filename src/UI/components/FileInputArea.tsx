@@ -51,39 +51,61 @@ export default function FileInputArea({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`
-        w-full h-32 border-2 border-dashed rounded-lg 
-        flex flex-col items-center justify-center 
-        cursor-pointer transition-colors
-        ${isDragOver 
-          ? 'border-blue-400 bg-blue-50' 
-          : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+      style={{
+        width: '100%',
+        height: '80px',
+        border: `2px dashed ${isDragOver ? '#3b82f6' : 'rgba(71, 85, 105, 0.4)'}`,
+        borderRadius: '16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        backgroundColor: isDragOver 
+          ? 'rgba(59, 130, 246, 0.1)' 
+          : 'rgba(15, 23, 42, 0.2)',
+        backgroundImage: isDragOver 
+          ? 'none'
+          : 'radial-gradient(circle at 20px 20px, rgba(71, 85, 105, 0.1) 1px, transparent 1px)',
+        backgroundSize: '40px 40px'
+      }}
+      onMouseEnter={(e) => {
+        if (!isDragOver) {
+          e.currentTarget.style.borderColor = '#64748b';
+          e.currentTarget.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
         }
-      `}
+      }}
+      onMouseLeave={(e) => {
+        if (!isDragOver) {
+          e.currentTarget.style.borderColor = 'rgba(71, 85, 105, 0.4)';
+          e.currentTarget.style.backgroundColor = 'rgba(15, 23, 42, 0.2)';
+        }
+      }}
     >
       {selectedFile ? (
-        <div className="text-center px-4">
-          <div className="text-sm font-medium text-gray-700">Selected:</div>
-          <div className="text-xs text-gray-500 truncate max-w-full">
+        <div style={{ textAlign: 'center', padding: '0 16px' }}>
+          <div style={{ fontSize: '12px', fontWeight: '600', color: '#10b981', marginBottom: '4px' }}>
+            Selected:
+          </div>
+          <div style={{ fontSize: '11px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>
             {selectedFile.split('\\').pop() || selectedFile}
           </div>
         </div>
       ) : (
-        <div className="text-center">
+        <div style={{ textAlign: 'center', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <svg 
-            className="mx-auto h-8 w-8 text-gray-400 mb-2" 
-            stroke="currentColor" 
+            width="24" 
+            height="24" 
             fill="none" 
-            viewBox="0 0 48 48"
+            stroke="#64748b" 
+            strokeWidth="2"
+            viewBox="0 0 24 24"
           >
-            <path 
-              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" 
-              strokeWidth={2} 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            />
+            <path d="M7 18a4.6 4.4 0 0 1 0-9 5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-12"/>
+            <path d="M9 15l3-3 3 3"/>
+            <path d="M12 12v9"/>
           </svg>
-          <div className="text-sm text-gray-600">{label}</div>
+          <div style={{ fontSize: '14px', color: '#94a3b8' }}>{label}</div>
         </div>
       )}
     </div>

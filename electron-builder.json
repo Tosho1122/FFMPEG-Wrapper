@@ -13,7 +13,7 @@
     "target": "dmg",
     "extraResources": [
       {
-        "from": "node_modules/ffmpeg-static/bin/darwin/x64/ffmpeg",
+        "from": "node_modules/ffmpeg-static/ffmpeg",
         "to": "ffmpeg"
       }
     ]
@@ -23,7 +23,7 @@
     "category": "Utility",
     "extraResources": [
       {
-        "from": "node_modules/ffmpeg-static/bin/linux/x64/ffmpeg",
+        "from": "node_modules/ffmpeg-static/ffmpeg",
         "to": "ffmpeg"
       }
     ]
@@ -32,7 +32,7 @@
     "target": ["portable", "msi"],
     "extraResources": [
       {
-        "from": "node_modules/ffmpeg-static/bin/win32/x64/ffmpeg.exe",
+        "from": "node_modules/ffmpeg-static/ffmpeg.exe",
         "to": "ffmpeg.exe"
       }
     ]

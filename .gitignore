@@ -13,6 +13,8 @@ dist-ssr
 dist-react
 dist-electron
 Screenshots
+Bugs.txt
+CLAUDE.md
 *.local
 
 # Editor directories and files

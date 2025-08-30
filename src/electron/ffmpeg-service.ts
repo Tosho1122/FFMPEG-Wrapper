@@ -1,8 +1,8 @@
 import ffmpeg from 'fluent-ffmpeg';
 import { EventEmitter } from 'events';
-import { createRequire } from 'module';
+import { app } from 'electron';
+import * as path from 'path';
 
-const require = createRequire(import.meta.url);
 const ffmpegStatic = require('ffmpeg-static');
 
 export interface ConversionProgress {
@@ -37,8 +37,26 @@ class FFmpegService extends EventEmitter {
 
   constructor() {
     super();
-    this.ffmpegPath = ffmpegStatic || 'ffmpeg';
+    this.ffmpegPath = this.getFfmpegPath();
     ffmpeg.setFfmpegPath(this.ffmpegPath);
+  }
+
+  private getFfmpegPath(): string {
+    // Check if we're in development or production
+    if (app.isPackaged) {
+      // In production, use the extracted FFmpeg from resources
+      const resourcesPath = process.resourcesPath;
+      const platform = process.platform;
+      
+      if (platform === 'win32') {
+        return path.join(resourcesPath, 'ffmpeg.exe');
+      } else if (platform === 'darwin' || platform === 'linux') {
+        return path.join(resourcesPath, 'ffmpeg');
+      }
+    }
+    
+    // In development, use ffmpeg-static
+    return ffmpegStatic || 'ffmpeg';
   }
 
   async getMediaInfo(inputPath: string): Promise<MediaInfo> {
@@ -120,7 +138,7 @@ class FFmpegService extends EventEmitter {
     return new Promise((resolve, reject) => {
       ffmpeg(inputPath)
         .noVideo()
-        .audioCodec('mp3')
+        .audioCodec('libmp3lame')
         .on('progress', (progress) => {
           this.emit('progress', { percent: progress.percent });
         })

@@ -1,9 +1,6 @@
-import {app, BrowserWindow, ipcMain, dialog} from 'electron';
+import {app, BrowserWindow, ipcMain, dialog, shell} from 'electron';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import FFmpegService, { type ConversionOptions } from './ffmpeg-service.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import FFmpegService, { type ConversionOptions } from './ffmpeg-service';
 
 const ffmpegService = new FFmpegService();
 
@@ -89,6 +86,10 @@ ipcMain.handle('compress-video', async (_, inputPath: string, outputPath: string
     } catch (error) {
         throw error;
     }
+});
+
+ipcMain.handle('reveal-file', async (_, filePath: string) => {
+    shell.showItemInFolder(filePath);
 });
 
 
