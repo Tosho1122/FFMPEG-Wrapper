@@ -226,13 +226,12 @@ export default function VideoTab({ onProcessingStart }: VideoTabProps) {
         </div>
       </div>
 
-      {/* Right Side - Output and Process */}
+      {/* Right Side - Output Settings and Preview */}
       <div className="flex flex-col gap-5">
-        {/* Output Section */}
         <div className={glassClassName}>
           <div className="p-5">
             <h3 className="text-base font-semibold text-slate-200 mb-4 m-0">
-              Output File
+              Output Settings
             </h3>
             <OutputSelector
               outputFile={outputFile}
@@ -242,22 +241,68 @@ export default function VideoTab({ onProcessingStart }: VideoTabProps) {
           </div>
         </div>
 
-        {/* Process Button */}
+        {/* Preview Settings */}
         <div className={glassClassName}>
           <div className="p-5">
-            <button
-              onClick={handleStartProcessing}
-              disabled={!inputFile}
-              className={`w-full py-4 px-6 rounded-2xl font-semibold text-base transition-all duration-300 ${
-                !inputFile
-                  ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/25 active:translate-y-0'
-              }`}
-            >
-              {operation === 'convert' ? '🎬 Convert Video' : '🗜️ Compress Video'}
-            </button>
+            <h3 className="text-base font-semibold text-slate-200 mb-4 m-0">
+              Preview Settings
+            </h3>
+            <div className="flex flex-col gap-2 mb-5">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 text-xs">Operation:</span>
+                <span className="text-slate-200 text-xs font-medium">
+                  {operation === 'convert' ? 'Video Conversion' : 'Video Compression'}
+                </span>
+              </div>
+              
+              {operation === 'convert' && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 text-xs">Format:</span>
+                    <span className="text-slate-200 text-xs font-medium">{format.toUpperCase()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 text-xs">Resolution:</span>
+                    <span className="text-slate-200 text-xs font-medium">
+                      {resolution === 'original' ? 'Keep Original' : 
+                       resolution === 'custom' ? 
+                         (customWidth && customHeight ? `${customWidth}x${customHeight}` : 'Custom (Not Set)') :
+                         resolution}
+                    </span>
+                  </div>
+                  {bitrate && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400 text-xs">Bitrate:</span>
+                      <span className="text-slate-200 text-xs font-medium">{bitrate}</span>
+                    </div>
+                  )}
+                </>
+              )}
+              
+              {operation === 'compress' && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400 text-xs">Quality (CRF):</span>
+                  <span className="text-slate-200 text-xs font-medium">
+                    {quality} {parseInt(quality) <= 20 ? '(High)' : parseInt(quality) <= 26 ? '(Medium)' : '(Low)'}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* Start Button */}
+        <button
+          onClick={handleStartProcessing}
+          disabled={!inputFile}
+          className={`w-full py-4 px-6 rounded-xl font-semibold text-base transition-all duration-300 ${
+            !inputFile
+              ? 'bg-slate-600/50 text-slate-400 cursor-not-allowed'
+              : 'bg-gradient-to-br from-blue-600 to-blue-800 text-white hover:from-blue-500 hover:to-blue-700 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/25 active:translate-y-0 shadow-lg shadow-blue-600/30'
+          }`}
+        >
+          {operation === 'convert' ? '🎬 Start Converting Video' : '🗜️ Start Compressing Video'}
+        </button>
       </div>
 
       <style>{`
