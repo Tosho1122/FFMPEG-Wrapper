@@ -6,6 +6,7 @@ export interface ElectronAPI {
   selectOutputFile: (defaultName: string) => Promise<string | null>;
   selectDirectory: () => Promise<string | null>;
   getMediaInfo: (inputPath: string) => Promise<any>;
+  generateThumbnail: (inputPath: string) => Promise<string>;
   convertVideo: (inputPath: string, outputPath: string, options: ConversionOptions) => Promise<boolean>;
   extractAudio: (inputPath: string, outputPath: string) => Promise<boolean>;
   compressVideo: (inputPath: string, outputPath: string, quality: string) => Promise<boolean>;
@@ -22,6 +23,7 @@ const electronAPI: ElectronAPI = {
   selectOutputFile: (defaultName: string) => ipcRenderer.invoke('select-output-file', defaultName),
   selectDirectory: () => ipcRenderer.invoke('select-directory'),
   getMediaInfo: (inputPath: string) => ipcRenderer.invoke('get-media-info', inputPath),
+  generateThumbnail: (inputPath: string) => ipcRenderer.invoke('generate-thumbnail', inputPath),
   convertVideo: (inputPath: string, outputPath: string, options: ConversionOptions) => 
     ipcRenderer.invoke('convert-video', inputPath, outputPath, options),
   extractAudio: (inputPath: string, outputPath: string) => 

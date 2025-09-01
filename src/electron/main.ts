@@ -61,6 +61,14 @@ ipcMain.handle('get-media-info', async (_, inputPath: string) => {
     }
 });
 
+ipcMain.handle('generate-thumbnail', async (_, inputPath: string) => {
+    try {
+        return await ffmpegService.generateThumbnail(inputPath);
+    } catch (error) {
+        throw error;
+    }
+});
+
 ipcMain.handle('convert-video', async (_, inputPath: string, outputPath: string, options: ConversionOptions) => {
     try {
         await ffmpegService.convertVideo(inputPath, outputPath, options);

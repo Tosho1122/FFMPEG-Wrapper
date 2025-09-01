@@ -23,6 +23,11 @@ export interface MediaInfo {
   bitrate?: number;
   size?: number;
   streams?: any[];
+  videoCodec?: string;
+  audioCodec?: string;
+  frameRate?: number;
+  sampleRate?: number;
+  channels?: number;
 }
 
 export interface ConversionOptions {
@@ -121,6 +126,7 @@ class FFmpegService extends EventEmitter {
 
         const format = metadata.format;
         const videoStream = metadata.streams.find(stream => stream.codec_type === 'video');
+        const audioStream = metadata.streams.find(stream => stream.codec_type === 'audio');
 
         resolve({
           duration: format.duration,
@@ -129,9 +135,43 @@ class FFmpegService extends EventEmitter {
           height: videoStream?.height,
           bitrate: format.bit_rate ? parseInt(format.bit_rate.toString()) : undefined,
           size: format.size ? parseInt(format.size.toString()) : undefined,
-          streams: metadata.streams
+          streams: metadata.streams,
+          videoCodec: videoStream?.codec_name,
+          audioCodec: audioStream?.codec_name,
+          frameRate: videoStream?.r_frame_rate ? this.parseFrameRate(videoStream.r_frame_rate) : undefined,
+          sampleRate: audioStream?.sample_rate,
+          channels: audioStream?.channels
         });
       });
+    });
+  }
+
+  private parseFrameRate(frameRate: string): number {
+    const parts = frameRate.split('/');
+    if (parts.length === 2) {
+      return Math.round((parseInt(parts[0]) / parseInt(parts[1])) * 100) / 100;
+    }
+    return parseFloat(frameRate);
+  }
+
+  async generateThumbnail(inputPath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const tempDir = app.getPath('temp');
+      const thumbnailPath = path.join(tempDir, `thumbnail_${Date.now()}.png`);
+
+      ffmpeg(inputPath)
+        .screenshots({
+          count: 1,
+          folder: tempDir,
+          filename: `thumbnail_${Date.now()}.png`,
+          timemarks: ['10%']
+        })
+        .on('end', () => {
+          resolve(thumbnailPath);
+        })
+        .on('error', (err) => {
+          reject(err);
+        });
     });
   }
 
