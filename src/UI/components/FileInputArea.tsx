@@ -1,19 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 
 interface FileInputAreaProps {
   onFileSelect: (filePath: string) => void;
-  acceptedTypes?: string;
   label?: string;
   selectedFile?: string | null;
 }
 
 export default function FileInputArea({ 
   onFileSelect, 
-  label = "Drag file here or click to browse",
+  label = "Click to select file",
   selectedFile 
 }: FileInputAreaProps) {
-  const [isDragOver, setIsDragOver] = useState(false);
-
   const handleClick = useCallback(async () => {
     if (!window.electronAPI) return;
     
@@ -23,81 +20,27 @@ export default function FileInputArea({
     }
   }, [onFileSelect]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0] as any;
-      const filePath = file.path || file.name;
-      onFileSelect(filePath);
-    }
-  }, [onFileSelect]);
-
   return (
     <div
       onClick={handleClick}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      style={{
-        width: '100%',
-        height: '80px',
-        border: `2px dashed ${isDragOver ? '#3b82f6' : 'rgba(71, 85, 105, 0.4)'}`,
-        borderRadius: '16px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        backgroundColor: isDragOver 
-          ? 'rgba(59, 130, 246, 0.1)' 
-          : 'rgba(15, 23, 42, 0.2)',
-        backgroundImage: isDragOver 
-          ? 'none'
-          : 'radial-gradient(circle at 20px 20px, rgba(71, 85, 105, 0.1) 1px, transparent 1px)',
-        backgroundSize: '40px 40px'
-      }}
-      onMouseEnter={(e) => {
-        if (!isDragOver) {
-          e.currentTarget.style.borderColor = '#64748b';
-          e.currentTarget.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isDragOver) {
-          e.currentTarget.style.borderColor = 'rgba(71, 85, 105, 0.4)';
-          e.currentTarget.style.backgroundColor = 'rgba(15, 23, 42, 0.2)';
-        }
-      }}
+      className="w-full h-20 border-2 border-dashed rounded-2xl flex items-center justify-center cursor-pointer transition-all duration-200 border-slate-600/40 bg-slate-900/20 hover:border-slate-500 hover:bg-slate-900/30 [background-image:radial-gradient(circle_at_20px_20px,_rgba(71,85,105,0.1)_1px,_transparent_1px)] [background-size:40px_40px]"
     >
       {selectedFile ? (
-        <div style={{ textAlign: 'center', padding: '0 16px' }}>
-          <div style={{ fontSize: '12px', fontWeight: '600', color: '#10b981', marginBottom: '4px' }}>
+        <div className="text-center px-4">
+          <div className="text-xs font-semibold text-emerald-500 mb-1">
             Selected:
           </div>
-          <div style={{ fontSize: '11px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>
+          <div className="text-[11px] text-slate-400 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]">
             {selectedFile.split('\\').pop() || selectedFile}
           </div>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="text-center flex items-center gap-3">
           <svg 
             width="24" 
             height="24" 
             fill="none" 
-            stroke="#64748b" 
+            className="stroke-slate-500" 
             strokeWidth="2"
             viewBox="0 0 24 24"
           >
@@ -105,7 +48,7 @@ export default function FileInputArea({
             <path d="M9 15l3-3 3 3"/>
             <path d="M12 12v9"/>
           </svg>
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>{label}</div>
+          <div className="text-sm text-slate-400">{label}</div>
         </div>
       )}
     </div>

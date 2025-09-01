@@ -93,6 +93,7 @@ ipcMain.handle('reveal-file', async (_, filePath: string) => {
 });
 
 
+
 app.on('ready', ()=>{
     const mainWindow = new BrowserWindow({
         width: 1200,
@@ -103,6 +104,8 @@ app.on('ready', ()=>{
             preload: path.join(__dirname, 'preload.js')
         }
     });
+    
+    
     mainWindow.loadFile(path.join(app.getAppPath(),'/dist-react/index.html'));
 });
 

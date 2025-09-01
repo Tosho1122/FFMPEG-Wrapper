@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './App.css';
+import { motion, AnimatePresence } from 'framer-motion';
 import SettingsTab from './components/tabs/SettingsTab';
 import VideoTab from './components/tabs/VideoTab';
 import AudioTab from './components/tabs/AudioTab';
@@ -92,37 +92,16 @@ function App() {
   ];
 
   return (
-    <div 
-      style={{ 
-        minHeight: '100vh',
-        background: '#0f172a',
-        margin: 0,
-        padding: 0,
-        width: '100vw',
-        overflow: 'hidden'
-      }}
-    >
+    <div className="min-h-screen bg-slate-900 m-0 p-0 w-screen overflow-hidden">
       {/* Dark modern navbar */}
-      <nav 
-        style={{ 
-          position: 'fixed', 
-          top: 0, 
-          left: 0, 
-          right: 0, 
-          zIndex: 1000, 
-          background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)'
-        }}
-      >
-        <div style={{ padding: '0 2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '60px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-slate-800 to-slate-700 backdrop-blur-lg border-b border-slate-600 border-opacity-30 shadow-md">
+        <div className="px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
               <img 
                 src="/ffmpegwrapper.png" 
                 alt="FFmpeg Wrapper" 
-                style={{ width: '32px', height: '32px' }}
+                className="w-8 h-8"
                 onError={(e) => {
                   // Fallback to text logo if image not found
                   e.currentTarget.style.display = 'none';
@@ -132,75 +111,51 @@ function App() {
                   }
                 }}
               />
-              <div 
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  background: 'linear-gradient(45deg, #3b82f6, #1e40af)',
-                  borderRadius: '8px',
-                  display: 'none',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <span style={{ color: 'white', fontSize: '14px', fontWeight: 'bold' }}>FF</span>
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg hidden items-center justify-center">
+                <span className="text-white text-sm font-bold">FF</span>
               </div>
-              <h1 
-                style={{ 
-                  fontSize: '20px', 
-                  fontWeight: '600', 
-                  color: '#e2e8f0',
-                  letterSpacing: '-0.025em',
-                  margin: 0
-                }}
-              >
+              <h1 className="text-xl font-semibold text-slate-200 tracking-tight m-0">
                 FFmpeg Wrapper
               </h1>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div className="flex items-center gap-1">
               {tabs.map((tab) => {
                 const IconComponent = tab.icon;
                 return (
-                  <button
+                  <motion.button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    style={{
-                      padding: '10px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      backgroundColor: activeTab === tab.id 
-                        ? 'rgba(59, 130, 246, 0.15)' 
-                        : 'transparent',
-                      color: activeTab === tab.id 
-                        ? '#3b82f6' 
-                        : '#94a3b8',
-                      boxShadow: activeTab === tab.id 
-                        ? '0 0 0 1px rgba(59, 130, 246, 0.3)' 
-                        : 'none'
+                    className={`py-2.5 px-4 rounded-lg text-sm font-medium flex items-center gap-2 border-none cursor-pointer relative ${
+                      activeTab === tab.id 
+                        ? 'bg-blue-500/15 text-blue-500 shadow-[0_0_0_1px_rgba(59,130,246,0.3)]' 
+                        : 'bg-transparent text-slate-400'
+                    }`}
+                    whileHover={{ 
+                      scale: 1.05,
+                      backgroundColor: activeTab === tab.id ? undefined : 'rgba(71, 85, 105, 0.3)',
+                      color: activeTab === tab.id ? undefined : '#e2e8f0'
                     }}
-                    onMouseEnter={(e) => {
-                      if (activeTab !== tab.id) {
-                        e.currentTarget.style.backgroundColor = 'rgba(71, 85, 105, 0.3)';
-                        e.currentTarget.style.color = '#e2e8f0';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeTab !== tab.id) {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = '#94a3b8';
-                      }
-                    }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   >
-                    <IconComponent size={18} />
+                    <motion.div
+                      animate={{ 
+                        rotate: activeTab === tab.id ? [0, 5, -5, 0] : 0,
+                        scale: activeTab === tab.id ? 1.1 : 1
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <IconComponent size={18} />
+                    </motion.div>
                     <span>{tab.label}</span>
-                  </button>
+                    {activeTab === tab.id && (
+                      <motion.div
+                        className="absolute inset-0 bg-blue-500/10 rounded-lg"
+                        layoutId="activeTab"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                  </motion.button>
                 );
               })}
             </div>
@@ -209,93 +164,112 @@ function App() {
       </nav>
       
       {/* Main content - full width, no margins */}
-      <div 
-        style={{ 
-          paddingTop: '60px',
-          width: '100vw',
-          minHeight: 'calc(100vh - 60px)',
-          background: '#0f172a'
-        }}
-      >
+      <div className="pt-16 w-screen min-h-screen bg-slate-900" style={{minHeight: 'calc(100vh - 4rem)'}}>
         {/* Status and Loading at the top */}
-        <div style={{ padding: '24px 24px 0 24px' }}>
+        <div className="px-6 pt-4">
           <PacManLoader 
             progress={progress?.percent || 0} 
             isVisible={isProcessing && progress !== null}
           />
 
-          {status && (
-            <div 
-              style={{
-                background: 'rgba(30, 41, 59, 0.7)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(71, 85, 105, 0.3)',
-                borderRadius: '16px',
-                padding: '16px 20px',
-                marginBottom: '24px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div style={{ marginRight: '12px' }}>
-                    {status.includes('Error') ? (
-                      <span style={{ color: '#ef4444', fontSize: '18px' }}>❌</span>
-                    ) : status.includes('Completed') ? (
-                      <span style={{ color: '#10b981', fontSize: '18px' }}>✅</span>
-                    ) : (
-                      <span style={{ color: '#3b82f6', fontSize: '18px' }}>ℹ️</span>
+          <AnimatePresence>
+            {status && (
+              <motion.div 
+                className="bg-slate-800/70 backdrop-blur-[10px] border border-slate-600/30 rounded-2xl px-5 py-4 mb-6 shadow-2xl"
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <motion.div 
+                      className="mr-3"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 400, delay: 0.1 }}
+                    >
+                      {status.includes('Error') ? (
+                        <span className="text-red-500 text-lg">❌</span>
+                      ) : status.includes('Completed') ? (
+                        <span className="text-emerald-500 text-lg">✅</span>
+                      ) : (
+                        <span className="text-blue-500 text-lg">ℹ️</span>
+                      )}
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <h3 className="text-xs font-semibold text-slate-200 m-0 mb-0.5">Status</h3>
+                      <div className="text-sm text-slate-400">
+                        {status}
+                      </div>
+                    </motion.div>
+                  </div>
+                  <AnimatePresence>
+                    {completedFilePath && (
+                      <motion.button
+                        onClick={handleGoToFile}
+                        className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white py-2 px-4 rounded-lg border-none text-xs font-medium cursor-pointer shadow-lg shadow-emerald-500/30"
+                        initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 20, scale: 0.8 }}
+                        whileHover={{ 
+                          y: -2, 
+                          scale: 1.05,
+                          boxShadow: "0 20px 25px -5px rgba(16, 185, 129, 0.4)"
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                      >
+                        📁 Go to File
+                      </motion.button>
                     )}
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: '13px', fontWeight: '600', color: '#e2e8f0', margin: 0, marginBottom: '2px' }}>Status</h3>
-                    <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-                      {status}
-                    </div>
-                  </div>
+                  </AnimatePresence>
                 </div>
-                {completedFilePath && (
-                  <button
-                    onClick={handleGoToFile}
-                    style={{
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                      color: 'white',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-1px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
-                    }}
-                  >
-                    📁 Go to File
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <div style={{ padding: '0 24px 24px 24px', width: '100%', boxSizing: 'border-box' }}>
-          {activeTab === 'video' && (
-            <VideoTab onProcessingStart={handleProcessingStart} />
-          )}
-          {activeTab === 'audio' && (
-            <AudioTab onProcessingStart={handleProcessingStart} />
-          )}
-          {activeTab === 'settings' && (
-            <SettingsTab />
-          )}
+        <div className="px-6 pb-6 w-full box-border">
+          <AnimatePresence mode="wait">
+            {activeTab === 'video' && (
+              <motion.div
+                key="video"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <VideoTab onProcessingStart={handleProcessingStart} />
+              </motion.div>
+            )}
+            {activeTab === 'audio' && (
+              <motion.div
+                key="audio"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <AudioTab onProcessingStart={handleProcessingStart} />
+              </motion.div>
+            )}
+            {activeTab === 'settings' && (
+              <motion.div
+                key="settings"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <SettingsTab />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

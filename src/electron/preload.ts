@@ -13,6 +13,7 @@ export interface ElectronAPI {
   onProgress: (callback: (progress: any) => void) => void;
   onComplete: (callback: (outputPath: string) => void) => void;
   onError: (callback: (error: string) => void) => void;
+  onFileDropped: (callback: (filePath: string) => void) => void;
   removeAllListeners: (channel: string) => void;
 }
 
@@ -36,6 +37,9 @@ const electronAPI: ElectronAPI = {
   },
   onError: (callback: (error: string) => void) => {
     ipcRenderer.on('ffmpeg-error', (_, error) => callback(error));
+  },
+  onFileDropped: (callback: (filePath: string) => void) => {
+    ipcRenderer.on('file-dropped', (_, filePath) => callback(filePath));
   },
   removeAllListeners: (channel: string) => {
     ipcRenderer.removeAllListeners(channel);

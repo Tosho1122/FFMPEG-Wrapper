@@ -67,41 +67,218 @@ export default function VideoTab({ onProcessingStart }: VideoTabProps) {
     onProcessingStart(operation, inputFile, finalOutputFile, options);
   };
 
-  const glassStyle = {
-    background: 'rgba(30, 41, 59, 0.7)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(71, 85, 105, 0.3)',
-    borderRadius: '16px',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)'
-  };
-
-  const inputStyle = {
-    background: 'rgba(15, 23, 42, 0.5)',
-    border: '1px solid rgba(71, 85, 105, 0.4)',
-    borderRadius: '12px',
-    padding: '12px 16px',
-    color: '#e2e8f0',
-    fontSize: '14px',
-    transition: 'all 0.2s ease',
-    width: '100%',
-    boxSizing: 'border-box' as const,
-    outline: 'none'
-  };
-
-  const selectStyle = {
-    ...inputStyle,
-    appearance: 'none' as const,
-    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-    backgroundPosition: 'right 12px center',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: '16px',
-    paddingRight: '40px',
-    cursor: 'pointer'
-  };
+  const glassClassName = "bg-slate-800/70 backdrop-blur-[10px] border border-slate-600/30 rounded-2xl shadow-2xl";
+  const inputClassName = "bg-slate-900/50 border border-slate-600/40 rounded-xl py-3 px-4 text-slate-200 text-sm transition-all duration-200 w-full outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
+  const selectClassName = "bg-slate-900/50 border border-slate-600/40 rounded-xl py-3 px-4 pr-10 text-slate-200 text-sm transition-all duration-200 w-full outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 appearance-none cursor-pointer bg-[url('data:image/svg+xml,%3csvg xmlns=\\'http://www.w3.org/2000/svg\\' fill=\\'none\\' viewBox=\\'0 0 20 20\\'%3e%3cpath stroke=\\'%236b7280\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'1.5\\' d=\\'m6 8 4 4 4-4\\'/%3e%3c/svg%3e')] bg-[length:16px_16px] bg-[position:right_12px_center] bg-no-repeat";
 
   return (
-    <>
+    <div className="grid grid-cols-2 gap-6 items-start">
+      {/* Left Side - Input and Operations */}
+      <div className="flex flex-col gap-5">
+        {/* Input File Section */}
+        <div className={glassClassName}>
+          <div className="p-5">
+            <h3 className="text-base font-semibold text-slate-200 mb-4 m-0">
+              Input File
+            </h3>
+            <FileInputArea
+              onFileSelect={handleInputFileSelect}
+              label="Click to select video file"
+              selectedFile={inputFile}
+            />
+          </div>
+        </div>
+
+        {/* Operation Type Section */}
+        <div className={glassClassName}>
+          <div className="p-5">
+            <h3 className="text-base font-semibold text-slate-200 mb-4 m-0">
+              Operation Type
+            </h3>
+            
+            {/* Radio Buttons */}
+            <div className="flex gap-4 mb-5">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  value="convert"
+                  checked={operation === 'convert'}
+                  onChange={(e) => setOperation(e.target.value as 'convert')}
+                  className={`appearance-none w-[18px] h-[18px] rounded-full mr-2 relative transition-all duration-200 border-2 ${
+                    operation === 'convert' 
+                      ? 'border-blue-500 bg-blue-500 shadow-[inset_0_0_0_3px_#0f172a]' 
+                      : 'border-slate-600 bg-transparent hover:border-blue-500 focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]'
+                  }`}
+                />
+                <span className="text-slate-200 text-sm">Convert Video</span>
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  value="compress"
+                  checked={operation === 'compress'}
+                  onChange={(e) => setOperation(e.target.value as 'compress')}
+                  className={`appearance-none w-[18px] h-[18px] rounded-full mr-2 relative transition-all duration-200 border-2 ${
+                    operation === 'compress' 
+                      ? 'border-blue-500 bg-blue-500 shadow-[inset_0_0_0_3px_#0f172a]' 
+                      : 'border-slate-600 bg-transparent hover:border-blue-500 focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]'
+                  }`}
+                />
+                <span className="text-slate-200 text-sm">Compress Video</span>
+              </label>
+            </div>
+
+            {/* Convert Options */}
+            {operation === 'convert' && (
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-slate-400 text-xs mb-1.5">
+                    Output Format
+                  </label>
+                  <select value={format} onChange={(e) => setFormat(e.target.value)} className={selectClassName}>
+                    <option value="mp4">MP4</option>
+                    <option value="avi">AVI</option>
+                    <option value="mov">MOV</option>
+                    <option value="webm">WebM</option>
+                    <option value="mkv">MKV</option>
+                    <option value="wmv">WMV</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 text-xs mb-1.5">
+                    Resolution
+                  </label>
+                  <select value={resolution} onChange={(e) => setResolution(e.target.value)} className={selectClassName}>
+                    <option value="original">Keep Original</option>
+                    <option value="1920x1080">1920x1080 (Full HD)</option>
+                    <option value="1280x720">1280x720 (HD)</option>
+                    <option value="854x480">854x480 (480p)</option>
+                    <option value="640x360">640x360 (360p)</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+
+                {resolution === 'custom' && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-400 text-xs mb-1">Width</label>
+                      <input
+                        type="number"
+                        placeholder="1920"
+                        value={customWidth}
+                        onChange={(e) => setCustomWidth(e.target.value)}
+                        className={inputClassName}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-400 text-xs mb-1">Height</label>
+                      <input
+                        type="number"
+                        placeholder="1080"
+                        value={customHeight}
+                        onChange={(e) => setCustomHeight(e.target.value)}
+                        className={inputClassName}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-slate-400 text-xs mb-1.5">
+                    Video Bitrate (optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 1000k"
+                    value={bitrate}
+                    onChange={(e) => setBitrate(e.target.value)}
+                    className={inputClassName}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Compress Options */}
+            {operation === 'compress' && (
+              <div>
+                <label className="block text-slate-400 text-xs mb-1.5">
+                  Quality (CRF)
+                </label>
+                <div className="mb-2">
+                  <input
+                    type="range"
+                    min="18"
+                    max="32"
+                    value={quality}
+                    onChange={(e) => setQuality(e.target.value)}
+                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
+                    <span>18 (Best)</span>
+                    <span className="font-medium text-blue-400">{quality}</span>
+                    <span>32 (Smallest)</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Output and Process */}
+      <div className="flex flex-col gap-5">
+        {/* Output Section */}
+        <div className={glassClassName}>
+          <div className="p-5">
+            <h3 className="text-base font-semibold text-slate-200 mb-4 m-0">
+              Output File
+            </h3>
+            <OutputSelector
+              outputFile={outputFile}
+              onOutputFileChange={setOutputFile}
+              defaultExtension={operation === 'convert' ? format : 'mp4'}
+            />
+          </div>
+        </div>
+
+        {/* Process Button */}
+        <div className={glassClassName}>
+          <div className="p-5">
+            <button
+              onClick={handleStartProcessing}
+              disabled={!inputFile}
+              className={`w-full py-4 px-6 rounded-2xl font-semibold text-base transition-all duration-300 ${
+                !inputFile
+                  ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/25 active:translate-y-0'
+              }`}
+            >
+              {operation === 'convert' ? '🎬 Convert Video' : '🗜️ Compress Video'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <style>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+        }
+        .slider::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+        }
         select option {
           background-color: #1e293b;
           color: #e2e8f0;
@@ -115,264 +292,6 @@ export default function VideoTab({ onProcessingStart }: VideoTabProps) {
           color: white;
         }
       `}</style>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
-      {/* Left Side - Input and Operations */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {/* Input File Section */}
-        <div style={glassStyle}>
-          <div style={{ padding: '20px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#e2e8f0', marginBottom: '16px', margin: 0 }}>
-              Input File
-            </h3>
-            <FileInputArea
-              onFileSelect={handleInputFileSelect}
-              acceptedTypes="video/*"
-              label="Drag video file here or click to browse"
-              selectedFile={inputFile}
-            />
-          </div>
-        </div>
-
-        {/* Operation Type Section */}
-        <div style={glassStyle}>
-          <div style={{ padding: '20px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#e2e8f0', marginBottom: '16px', margin: 0 }}>
-              Operation Type
-            </h3>
-            
-            {/* Radio Buttons */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  value="convert"
-                  checked={operation === 'convert'}
-                  onChange={(e) => setOperation(e.target.value as 'convert')}
-                  style={{
-                    appearance: 'none',
-                    width: '18px',
-                    height: '18px',
-                    border: `2px solid ${operation === 'convert' ? '#3b82f6' : '#475569'}`,
-                    borderRadius: '50%',
-                    marginRight: '8px',
-                    position: 'relative',
-                    transition: 'all 0.2s ease',
-                    backgroundColor: operation === 'convert' ? '#3b82f6' : 'transparent',
-                    boxShadow: operation === 'convert' 
-                      ? 'inset 0 0 0 3px #0f172a' 
-                      : 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#3b82f6';
-                    if (operation !== 'convert') {
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (operation !== 'convert') {
-                      e.currentTarget.style.borderColor = '#475569';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }
-                  }}
-                />
-                <span style={{ color: '#e2e8f0', fontSize: '14px' }}>Convert Video</span>
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  value="compress"
-                  checked={operation === 'compress'}
-                  onChange={(e) => setOperation(e.target.value as 'compress')}
-                  style={{
-                    appearance: 'none',
-                    width: '18px',
-                    height: '18px',
-                    border: `2px solid ${operation === 'compress' ? '#3b82f6' : '#475569'}`,
-                    borderRadius: '50%',
-                    marginRight: '8px',
-                    position: 'relative',
-                    transition: 'all 0.2s ease',
-                    backgroundColor: operation === 'compress' ? '#3b82f6' : 'transparent',
-                    boxShadow: operation === 'compress' 
-                      ? 'inset 0 0 0 3px #0f172a' 
-                      : 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#3b82f6';
-                    if (operation !== 'compress') {
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (operation !== 'compress') {
-                      e.currentTarget.style.borderColor = '#475569';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }
-                  }}
-                />
-                <span style={{ color: '#e2e8f0', fontSize: '14px' }}>Compress Video</span>
-              </label>
-            </div>
-
-            {/* Convert Options */}
-            {operation === 'convert' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>
-                    Output Format
-                  </label>
-                  <select value={format} onChange={(e) => setFormat(e.target.value)} style={selectStyle}>
-                    <option value="mp4">MP4</option>
-                    <option value="avi">AVI</option>
-                    <option value="mov">MOV</option>
-                    <option value="webm">WebM</option>
-                    <option value="mkv">MKV</option>
-                    <option value="wmv">WMV</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>
-                    Resolution
-                  </label>
-                  <select value={resolution} onChange={(e) => setResolution(e.target.value)} style={selectStyle}>
-                    <option value="original">Keep Original</option>
-                    <option value="1920x1080">1920x1080 (Full HD)</option>
-                    <option value="1280x720">1280x720 (HD)</option>
-                    <option value="854x480">854x480 (480p)</option>
-                    <option value="640x360">640x360 (360p)</option>
-                    <option value="custom">Custom</option>
-                  </select>
-                </div>
-
-                {resolution === 'custom' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <div>
-                      <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', marginBottom: '4px' }}>Width</label>
-                      <input
-                        type="number"
-                        placeholder="1920"
-                        value={customWidth}
-                        onChange={(e) => setCustomWidth(e.target.value)}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', marginBottom: '4px' }}>Height</label>
-                      <input
-                        type="number"
-                        placeholder="1080"
-                        value={customHeight}
-                        onChange={(e) => setCustomHeight(e.target.value)}
-                        style={inputStyle}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>
-                    Video Bitrate (optional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., 1000k"
-                    value={bitrate}
-                    onChange={(e) => setBitrate(e.target.value)}
-                    style={inputStyle}
-                  />
-                  <p style={{ color: '#64748b', fontSize: '12px', marginTop: '4px', margin: '4px 0 0 0' }}>
-                    Leave empty for auto. Use format like "1000k" or "2M"
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Compress Options */}
-            {operation === 'compress' && (
-              <div>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '12px' }}>
-                  Quality (CRF)
-                </label>
-                <input
-                  type="range"
-                  min="18"
-                  max="51"
-                  value={quality}
-                  onChange={(e) => setQuality(e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: '6px',
-                    borderRadius: '3px',
-                    background: 'linear-gradient(to right, #10b981 0%, #3b82f6 50%, #ef4444 100%)',
-                    outline: 'none',
-                    appearance: 'none'
-                  }}
-                />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-                  <span style={{ color: '#64748b', fontSize: '11px' }}>Best Quality (18)</span>
-                  <span style={{ color: '#e2e8f0', fontSize: '12px', fontWeight: '500' }}>Current: {quality}</span>
-                  <span style={{ color: '#64748b', fontSize: '11px' }}>Smallest File (51)</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Output Settings */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div style={glassStyle}>
-          <div style={{ padding: '20px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#e2e8f0', marginBottom: '16px', margin: 0 }}>
-              Output Settings
-            </h3>
-            <OutputSelector
-              outputFile={outputFile}
-              onOutputFileChange={setOutputFile}
-              defaultExtension={operation === 'convert' ? format : 'mp4'}
-            />
-          </div>
-        </div>
-
-        {/* Start Button under Output */}
-        <button
-          onClick={handleStartProcessing}
-          disabled={!inputFile}
-          style={{
-            background: !inputFile 
-              ? 'rgba(71, 85, 105, 0.5)' 
-              : 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-            color: 'white',
-            padding: '16px 24px',
-            borderRadius: '12px',
-            border: 'none',
-            fontSize: '16px',
-            fontWeight: '600',
-            cursor: !inputFile ? 'not-allowed' : 'pointer',
-            transition: 'all 0.2s ease',
-            boxShadow: !inputFile 
-              ? 'none' 
-              : '0 4px 14px rgba(59, 130, 246, 0.3)',
-            width: '100%'
-          }}
-          onMouseEnter={(e) => {
-            if (inputFile) {
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (inputFile) {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 14px rgba(59, 130, 246, 0.3)';
-            }
-          }}
-        >
-          Start {operation === 'convert' ? 'Converting' : 'Compressing'}
-        </button>
-      </div>
-      </div>
-    </>
+    </div>
   );
 }

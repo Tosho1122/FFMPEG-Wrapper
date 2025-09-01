@@ -42,23 +42,12 @@ export default function OutputSelector({
     }
   };
 
-  const inputStyle = {
-    background: 'rgba(15, 23, 42, 0.5)',
-    border: '1px solid rgba(71, 85, 105, 0.4)',
-    borderRadius: '12px',
-    padding: '12px 16px',
-    color: '#e2e8f0',
-    fontSize: '14px',
-    transition: 'all 0.2s ease',
-    width: '100%',
-    boxSizing: 'border-box' as const,
-    outline: 'none'
-  };
+  const inputClassName = "bg-slate-900/50 border border-slate-600/40 rounded-xl py-3 px-4 text-slate-200 text-sm transition-all duration-200 w-full outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div className="flex flex-col gap-4">
       <div>
-        <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>
+        <label className="block text-slate-400 text-xs mb-1.5">
           Output File Name
         </label>
         <input
@@ -66,47 +55,25 @@ export default function OutputSelector({
           value={outputFileName}
           onChange={(e) => handleFileNameChange(e.target.value)}
           placeholder={`output.${defaultExtension}`}
-          style={inputStyle}
+          className={inputClassName}
         />
       </div>
       
       <div>
-        <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>
+        <label className="block text-slate-400 text-xs mb-1.5">
           Output Directory
         </label>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex gap-2">
           <input
             type="text"
             value={outputDirectory}
             readOnly
             placeholder="Will create 'output' folder in working directory if not set"
-            style={{
-              ...inputStyle,
-              flex: 1,
-              backgroundColor: 'rgba(15, 23, 42, 0.3)',
-              cursor: 'not-allowed'
-            }}
+            className={`${inputClassName} flex-1 bg-slate-900/30 cursor-not-allowed`}
           />
           <button
             onClick={handleSelectDirectory}
-            style={{
-              background: 'rgba(59, 130, 246, 0.8)',
-              color: 'white',
-              padding: '12px 16px',
-              borderRadius: '12px',
-              border: 'none',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#3b82f6';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(59, 130, 246, 0.8)';
-            }}
+            className="bg-blue-500/80 hover:bg-blue-500 text-white py-3 px-4 rounded-xl border-none text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap"
           >
             Browse
           </button>
@@ -114,18 +81,11 @@ export default function OutputSelector({
       </div>
       
       {outputFile && (
-        <div 
-          style={{
-            padding: '12px',
-            background: 'rgba(15, 23, 42, 0.3)',
-            borderRadius: '8px',
-            border: '1px solid rgba(71, 85, 105, 0.2)'
-          }}
-        >
-          <div style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '4px' }}>
+        <div className="p-3 bg-slate-900/30 rounded-lg border border-slate-600/20">
+          <div className="text-slate-400 text-xs mb-1">
             <strong>Full Output Path:</strong>
           </div>
-          <div style={{ color: '#e2e8f0', fontSize: '13px', wordBreak: 'break-all' }}>
+          <div className="text-slate-200 text-xs break-all">
             {outputFile}
           </div>
         </div>
